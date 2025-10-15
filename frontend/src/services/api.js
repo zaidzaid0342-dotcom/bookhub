@@ -64,5 +64,19 @@ export const updateUser = (id, userData) => api.put(`/admin/users/${id}`, userDa
 export const deleteUser = (id) => api.delete(`/admin/users/${id}`);
 export const adminGetAllBooks = () => api.get('/admin/books');
 export const adminDeleteBook = (id) => api.delete(`/admin/books/${id}`);
+// services/api.js
+// Add these new functions to your existing API service
+
+// Get all offers (admin only)
+export const getAllOffers = () => api.get('/admin/offers');
+
+// Update offer status (admin only)
+export const updateOfferStatus = (id, status) => api.put(`/admin/offers/${id}`, { status });
+
+// Get offer details (admin only)
+export const getOfferDetails = (id) => api.get(`/admin/offers/${id}`);
+
+// Get user details (admin only)
+export const getUserDetails = (id) => api.get(`/admin/users/${id}`);
 
 export default api;

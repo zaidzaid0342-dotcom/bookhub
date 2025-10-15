@@ -12,4 +12,9 @@ router.delete('/users/:id', auth, admin, adminController.deleteUser);
 router.get('/books', auth, admin, adminController.getAllBooks);
 router.delete('/books/:id', auth, admin, adminController.deleteBook);
 
+// Add these new routes for offers
+router.get('/offers', auth, admin, adminController.getAllOffers);
+router.get('/offers/:id', auth, admin, adminController.getOfferDetails);
+router.put('/offers/:id', auth, admin, adminController.updateOfferStatus);
+
 module.exports = router;

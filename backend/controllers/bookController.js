@@ -104,25 +104,23 @@ exports.searchBooks = async (req, res) => {
 };
 
 // Make an offer
+// controllers/bookController.js
+
+// Make an offer (now sending a message)
 exports.makeOffer = async (req, res) => {
-  console.log('Make offer request received');
+  console.log('Send message request received');
   console.log('Book ID:', req.params.id);
   console.log('Request body:', req.body);
   console.log('User from token:', req.user);
 
-  let { offerPrice } = req.body;
+  let { message } = req.body;  // Changed from offerPrice to message
   const bookId = req.params.id;
 
   try {
-    // Convert offerPrice to number if it's a string
-    if (typeof offerPrice === 'string') {
-      offerPrice = parseFloat(offerPrice);
-    }
-
-    // Validate offerPrice
-    if (!offerPrice || isNaN(offerPrice) || offerPrice <= 0) {
-      console.log('Invalid offer price:', offerPrice);
-      return res.status(400).json({ msg: 'Invalid offer price' });
+    // Validate message
+    if (!message || typeof message !== 'string' || message.trim() === '') {
+      console.log('Invalid message:', message);
+      return res.status(400).json({ msg: 'Message is required' });
     }
 
     const book = await Book.findById(bookId);
@@ -146,24 +144,23 @@ exports.makeOffer = async (req, res) => {
 
     if (book.seller === user.id) {
       console.log('User is the seller');
-      return res.status(400).json({ msg: 'Cannot make an offer on your own book' });
+      return res.status(400).json({ msg: 'Cannot send a message for your own book' });
     }
 
     const newOffer = new Offer({
       book: bookId,
       buyer: user.id,
-      offerPrice: offerPrice,
+      message: message.trim(),  // Changed from offerPrice to message
     });
 
     const offer = await newOffer.save();
-    console.log('Offer saved:', offer);
+    console.log('Message saved:', offer);
     res.json(offer);
   } catch (err) {
     console.error('Error in makeOffer:', err);
     res.status(500).json({ msg: 'Server error', error: err.message });
   }
 };
-
 // Get offers for a book
 exports.getBookOffers = async (req, res) => {
   try {

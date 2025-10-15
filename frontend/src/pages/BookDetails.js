@@ -1,3 +1,4 @@
+// components/BookDetails.js
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -7,7 +8,7 @@ const BookDetails = () => {
   const { id } = useParams();
   const [book, setBook] = useState(null);
   const [offers, setOffers] = useState([]);
-  const [offerPrice, setOfferPrice] = useState('');
+  const [message, setMessage] = useState(''); // Changed from offerPrice to message
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -68,7 +69,7 @@ const BookDetails = () => {
       if (acceptedOffer) {
         setBuyerAcceptedNotification({
           type: 'success',
-          message: `Your offer for ${book?.bookName || 'this book'} has been accepted! Contact the seller to arrange pickup.`,
+          message: `Your message for ${book?.bookName || 'this book'} has been accepted! Contact the seller to arrange pickup.`,
           sellerInfo: {
             username: book?.seller?.username || 'Seller',
             email: book?.seller?.email || 'Not provided',
@@ -92,19 +93,17 @@ const BookDetails = () => {
 
   const handleMakeOffer = async () => {
     try {
-      if (!offerPrice || isNaN(offerPrice) || parseFloat(offerPrice) <= 0) {
-        setError('Please enter a valid offer price');
+      if (!message || message.trim() === '') {
+        setError('Please enter a message');
         return;
       }
 
-      console.log('Making offer for book ID:', id);
-      console.log('Offer price:', offerPrice);
+      console.log('Sending message for book ID:', id);
+      console.log('Message:', message);
       console.log('User:', user);
       
-      const numericOfferPrice = parseFloat(offerPrice);
-      
-      await makeOffer(id, { offerPrice: numericOfferPrice });
-      setOfferPrice('');
+      await makeOffer(id, { message: message.trim() }); // Changed from offerPrice to message
+      setMessage('');
       setSuccess(true);
       setError('');
       setTimeout(() => setSuccess(false), 3000);
@@ -112,15 +111,15 @@ const BookDetails = () => {
       const res = await getBookOffers(id);
       setOffers(res.data);
     } catch (err) {
-      console.error('Error making offer:', err);
+      console.error('Error sending message:', err);
       console.error('Error response:', err.response?.data);
-      setError(err.response?.data?.msg || 'Failed to make offer');
+      setError(err.response?.data?.msg || 'Failed to send message');
     }
   };
 
   const handleRespondToOffer = async (offerId, status) => {
     try {
-      console.log(`Responding to offer ${offerId} with status: ${status}`);
+      console.log(`Responding to message ${offerId} with status: ${status}`);
       await respondToOffer(offerId, { status });
       
       const res = await getBookOffers(id);
@@ -139,7 +138,7 @@ const BookDetails = () => {
         // Set notification for successful deal
         setNotification({
           type: 'success',
-          message: 'Offer accepted successfully! Contact information has been shared with both parties.',
+          message: 'Message accepted successfully! Contact information has been shared with both parties.',
           offerId: offerId
         });
         
@@ -147,10 +146,10 @@ const BookDetails = () => {
         setTimeout(() => setNotification(null), 5000);
       }
     } catch (err) {
-      console.error('Error responding to offer:', err);
+      console.error('Error responding to message:', err);
       setNotification({
         type: 'error',
-        message: 'Failed to respond to offer. Please try again.'
+        message: 'Failed to respond to message. Please try again.'
       });
     }
   };
@@ -225,7 +224,7 @@ const BookDetails = () => {
         </div>
       )}
 
-      {/* Buyer Accepted Offer Notification */}
+      {/* Buyer Accepted Message Notification */}
       {buyerAcceptedNotification && (
         <div className="fixed top-4 right-4 z-50 p-6 rounded-xl shadow-xl bg-green-50 border-2 border-green-200 w-full max-w-md transform transition-all duration-300">
           <div className="flex justify-between items-start">
@@ -236,7 +235,7 @@ const BookDetails = () => {
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="text-lg font-bold text-green-800">Offer Accepted!</h3>
+                <h3 className="text-lg font-bold text-green-800">Message Accepted!</h3>
                 <div className="mt-2 text-green-700">
                   <p className="font-medium">{buyerAcceptedNotification.message}</p>
                   <div className="mt-4 bg-white p-4 rounded-lg shadow-sm">
@@ -394,7 +393,7 @@ const BookDetails = () => {
                    offer.buyer?._id === user.id || 
                    offer.buyer?.id === user.id)
                 ) ? (
-                  // Show seller details to the buyer if their offer is accepted
+                  // Show seller details to the buyer if their message is accepted
                   <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-5 rounded-xl shadow-sm border border-green-100">
                     <div className="flex items-center mb-4">
                       <div className="bg-green-100 rounded-full p-3 mr-4 shadow-md">
@@ -436,7 +435,7 @@ const BookDetails = () => {
                       <div className="ml-4">
                         <h3 className="text-lg font-medium text-blue-800">Seller Information</h3>
                         <div className="mt-2 text-blue-700">
-                          <p className="font-medium">Seller contact information will be shared after your offer is accepted.</p>
+                          <p className="font-medium">Seller contact information will be shared after your message is accepted.</p>
                         </div>
                       </div>
                     </div>
@@ -444,15 +443,16 @@ const BookDetails = () => {
                 )}
               </div>
               
+              {/* Send Message Section */}
               {isAuthenticated && !isSeller && book.status === 'available' && (
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl shadow-sm border border-blue-100">
-                  <h2 className="text-xl font-bold text-gray-900 mb-4">Make an Offer</h2>
+                  <h2 className="text-xl font-bold text-gray-900 mb-4">Send a Message to Seller</h2>
                   {success && (
                     <div className="mb-4 bg-green-100 text-green-800 p-4 rounded-lg flex items-center">
                       <svg className="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                       </svg>
-                      Offer submitted successfully! The seller will review your offer.
+                      Message sent successfully! The seller will review your message.
                     </div>
                   )}
                   {error && (
@@ -463,26 +463,21 @@ const BookDetails = () => {
                       {error}
                     </div>
                   )}
-                  <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="flex flex-col gap-3">
                     <div className="relative flex-grow">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span className="text-gray-500 text-lg font-bold">$</span>
-                      </div>
-                      <input
-                        type="number"
-                        value={offerPrice}
-                        onChange={(e) => setOfferPrice(e.target.value)}
-                        className="block w-full pl-8 pr-4 py-4 border-2 border-gray-300 rounded-l-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-lg transition-all duration-200"
-                        placeholder="Your offer price"
-                        min="0.01"
-                        step="0.01"
+                      <textarea
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        className="block w-full px-4 py-4 border-2 border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-lg transition-all duration-200"
+                        placeholder="Type your message to the seller..."
+                        rows="3"
                       />
                     </div>
                     <button
                       onClick={handleMakeOffer}
-                      className="inline-flex items-center justify-center px-6 py-4 border border-transparent text-base font-bold rounded-r-lg text-white bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                      className="inline-flex items-center justify-center px-6 py-4 border border-transparent text-base font-bold rounded-lg text-white bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:scale-105 shadow-lg"
                     >
-                      Submit Offer
+                      Send Message
                     </button>
                   </div>
                 </div>
@@ -491,18 +486,18 @@ const BookDetails = () => {
           </div>
         </div>
         
-        {/* Offers Section - Only visible to the book owner/seller */}
+        {/* Messages Section - Only visible to the book owner/seller */}
         {isSeller && (
           <div className="mt-10 bg-white rounded-2xl shadow-xl p-8">
             <div className="flex justify-between items-center mb-8 pb-4 border-b-2 border-gray-100">
               <h2 className="text-2xl font-bold text-gray-900 flex items-center">
                 <svg className="w-6 h-6 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                 </svg>
-                Offers
+                Messages
               </h2>
               <span className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-sm font-bold px-4 py-2 rounded-full shadow-md">
-                {offers.length} {offers.length === 1 ? 'Offer' : 'Offers'}
+                {offers.length} {offers.length === 1 ? 'Message' : 'Messages'}
               </span>
             </div>
             
@@ -511,8 +506,8 @@ const BookDetails = () => {
                 <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                 </svg>
-                <h3 className="mt-6 text-xl font-bold text-gray-900">No offers yet</h3>
-                <p className="mt-3 text-gray-600 max-w-md mx-auto">When buyers make offers, they'll appear here for you to review.</p>
+                <h3 className="mt-6 text-xl font-bold text-gray-900">No messages yet</h3>
+                <p className="mt-3 text-gray-600 max-w-md mx-auto">When buyers send messages, they'll appear here for you to review.</p>
               </div>
             ) : (
               <div className="space-y-6">
@@ -543,7 +538,7 @@ const BookDetails = () => {
                             <p className="font-bold text-gray-800">{offer.buyer?.id || 'Unknown'}</p>
                           </div>
                           
-                          {/* Conditionally show contact details - only after offer is accepted */}
+                          {/* Conditionally show contact details - only after message is accepted */}
                           {showBuyerDetails[offer._id] && (
                             <>
                               <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
@@ -558,7 +553,7 @@ const BookDetails = () => {
                           )}
                         </div>
                         
-                        {/* Additional Buyer Details - only show if offer is accepted */}
+                        {/* Additional Buyer Details - only show if message is accepted */}
                         {showBuyerDetails[offer._id] && (
                           <div className="mt-6 bg-gradient-to-r from-blue-50 to-indigo-50 p-5 rounded-xl shadow-sm border border-blue-100">
                             <h4 className="font-bold text-blue-800 mb-3 flex items-center">
@@ -581,11 +576,13 @@ const BookDetails = () => {
                         )}
                       </div>
                       
-                      {/* Offer Details */}
+                      {/* Message Details */}
                       <div className="md:w-1/3 md:text-right">
                         <div className="mb-6">
-                          <p className="text-gray-500 font-medium">Offer Amount</p>
-                          <p className="text-3xl font-bold text-gray-900">${offer.offerPrice}</p>
+                          <p className="text-gray-500 font-medium">Message</p>
+                          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+                            <p className="text-gray-800">{offer.message}</p>
+                          </div>
                         </div>
                         
                         <div className="mb-6">
@@ -607,7 +604,7 @@ const BookDetails = () => {
                               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                               </svg>
-                              Accept Offer
+                              Accept Message
                             </button>
                             <button
                               onClick={() => handleRespondToOffer(offer._id, 'rejected')}
@@ -616,7 +613,7 @@ const BookDetails = () => {
                               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
                               </svg>
-                              Reject Offer
+                              Reject Message
                             </button>
                           </div>
                         )}
@@ -630,7 +627,7 @@ const BookDetails = () => {
                                 </svg>
                               </div>
                               <div className="ml-3 text-left">
-                                <h3 className="text-lg font-bold text-green-800">Deal Closed!</h3>
+                                <h3 className="text-lg font-bold text-green-800">Message Accepted!</h3>
                                 <div className="mt-2 text-green-700">
                                   <p className="font-medium">Contact information has been shared with both parties.</p>
                                   <p className="mt-2 font-medium">Buyer's contact: {offer.buyer?.email || 'Email not provided'} {offer.buyer?.phone ? `| ${offer.buyer.phone}` : ''}</p>
@@ -640,7 +637,7 @@ const BookDetails = () => {
                           </div>
                         )}
                         
-                        {/* Toggle button for buyer details - only show after offer is accepted */}
+                        {/* Toggle button for buyer details - only show after message is accepted */}
                         {offer.status === 'accepted' && (
                           <button
                             onClick={() => toggleBuyerDetails(offer._id)}
@@ -658,7 +655,7 @@ const BookDetails = () => {
                               <>
                                 <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5,12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                 </svg>
                                 Show Full Details
                               </>
@@ -686,7 +683,7 @@ const BookDetails = () => {
               <div className="ml-4">
                 <h3 className="text-lg font-bold text-yellow-800">Authentication Required</h3>
                 <div className="mt-2 text-yellow-700">
-                  <p className="font-medium">You need to be logged in to make offers. If you are the seller of this book, please log in to view and respond to offers.</p>
+                  <p className="font-medium">You need to be logged in to send messages. If you are the seller of this book, please log in to view and respond to messages.</p>
                   <div className="mt-4 flex flex-wrap gap-3">
                     <a href="/login" className="inline-flex items-center px-4 py-2 border border-transparent text-base font-bold rounded-md text-yellow-800 bg-yellow-100 hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors duration-200">
                       Log in

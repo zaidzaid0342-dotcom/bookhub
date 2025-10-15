@@ -1,3 +1,4 @@
+// models/Offer.js
 const mongoose = require('mongoose');
 
 const OfferSchema = new mongoose.Schema({
@@ -11,8 +12,8 @@ const OfferSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
-  offerPrice: {
-    type: Number,
+  message: {  // Replaced offerPrice with message
+    type: String,
     required: true,
   },
   status: {

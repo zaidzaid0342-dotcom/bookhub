@@ -17,7 +17,7 @@ const BookCard = React.memo(({ book }) => {
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.218.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.218.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.a477-4.5 1.253" />
             </svg>
           </div>
         )}
@@ -42,9 +42,6 @@ const BookCard = React.memo(({ book }) => {
           >
             View Details
           </a>
-          <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300">
-            Edit
-          </button>
         </div>
       </div>
     </div>
@@ -126,7 +123,7 @@ const OfferItem = React.memo(({ book, offers }) => {
               ) : (
                 <div className="w-20 h-20 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.218.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.218.a477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.a477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.a477-4.5 1.253" />
                   </svg>
                 </div>
               )}
@@ -139,14 +136,16 @@ const OfferItem = React.memo(({ book, offers }) => {
           </div>
           
           <div className="mt-6">
-            <h4 className="text-lg font-medium text-gray-800 mb-3">Your Offers:</h4>
+            <h4 className="text-lg font-medium text-gray-800 mb-3">Your Messages:</h4>
             <div className="space-y-3">
               {offers.map((offer) => (
                 <div key={offer._id} className="flex justify-between items-center bg-gray-50 p-4 rounded-lg border border-gray-200">
-                  <div>
-                    <p className="text-lg font-medium text-gray-900">${offer.offerPrice}</p>
+                  <div className="flex-1">
                     <p className="text-sm text-gray-500">
                       {new Date(offer.createdAt).toLocaleDateString()}
+                    </p>
+                    <p className="text-gray-700 mt-1 truncate" title={offer.message || 'No message'}>
+                      {offer.message || 'No message'}
                     </p>
                   </div>
                   <OfferStatus status={offer.status} />
@@ -158,8 +157,10 @@ const OfferItem = React.memo(({ book, offers }) => {
         
         <div className="md:w-1/3 md:text-right md:pl-6">
           <div className="mb-6">
-            <p className="text-sm text-gray-500 mb-1">Latest Offer</p>
-            <p className="text-3xl font-bold text-blue-600">${latestOffer?.offerPrice || '0'}</p>
+            <p className="text-sm text-gray-500 mb-1">Latest Message</p>
+            <p className="text-lg font-medium text-gray-900 truncate" title={latestOffer?.message || 'No message'}>
+              {latestOffer?.message || 'No message'}
+            </p>
           </div>
           
           <div className="mb-6">
@@ -180,9 +181,9 @@ const OfferItem = React.memo(({ book, offers }) => {
                   </svg>
                 </div>
                 <div className="ml-3 text-left">
-                  <h3 className="text-lg font-medium text-green-800">Offer Accepted!</h3>
+                  <h3 className="text-lg font-medium text-green-800">Message Accepted!</h3>
                   <div className="mt-2 text-green-700">
-                    <p>Congratulations! Your offer has been accepted by the seller.</p>
+                    <p>Congratulations! Your message has been accepted by the seller.</p>
                     <p className="mt-2 font-medium">Contact the seller to arrange pickup:</p>
                     <p className="mt-1">Email: {book.seller?.email || 'Not provided'}</p>
                     <p className="mt-1">Phone: {book.seller?.phone || 'Not provided'}</p>
@@ -201,10 +202,10 @@ const OfferItem = React.memo(({ book, offers }) => {
                   </svg>
                 </div>
                 <div className="ml-3 text-left">
-                  <h3 className="text-lg font-medium text-red-800">Offer Rejected</h3>
+                  <h3 className="text-lg font-medium text-red-800">Message Rejected</h3>
                   <div className="mt-2 text-red-700">
-                    <p>Unfortunately, the seller has rejected your offer.</p>
-                    <p className="mt-2">You can browse other similar books or make a new offer on this book if it's still available.</p>
+                    <p>Unfortunately, the seller has rejected your message.</p>
+                    <p className="mt-2">You can browse other similar books or send a new message on this book if it's still available.</p>
                   </div>
                 </div>
               </div>
@@ -228,6 +229,7 @@ const OfferItem = React.memo(({ book, offers }) => {
 // Memoized Received Offer Item Component
 const ReceivedOfferItem = React.memo(({ offer, handleRespondToOffer }) => {
   const status = useMemo(() => getOfferStatus(offer.status), [offer.status]);
+  const [showBuyerDetails, setShowBuyerDetails] = useState(false);
 
   return (
     <div className="border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
@@ -245,7 +247,7 @@ const ReceivedOfferItem = React.memo(({ offer, handleRespondToOffer }) => {
               ) : (
                 <div className="w-20 h-20 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.218.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.218.a477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.a477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.a477-4.5 1.253" />
                   </svg>
                 </div>
               )}
@@ -256,16 +258,60 @@ const ReceivedOfferItem = React.memo(({ offer, handleRespondToOffer }) => {
               <p className="text-gray-600 mt-1">Your Book</p>
             </div>
           </div>
+          
+          {/* Message Section */}
+          <div className="mt-6 mb-6">
+            <h4 className="text-lg font-medium text-gray-800 mb-2">Message from Buyer:</h4>
+            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <p className="text-gray-700">{offer.message || 'No message provided'}</p>
+            </div>
+          </div>
+          
+          {/* Buyer Information Section */}
+          <div className="mt-6 mb-6">
+            <h4 className="text-lg font-medium text-gray-800 mb-2">Buyer Information</h4>
+            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <p className="text-gray-900 font-medium">{offer.buyer?.username || 'Unknown User'}</p>
+              <p className="text-gray-600 mt-1">{offer.buyer?.city || 'Unknown'}, {offer.buyer?.state || 'Unknown'}</p>
+              
+              {/* Show contact details only if offer is accepted */}
+              {offer.status === 'accepted' && (
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <p className="text-gray-900 font-medium">
+                    <span className="text-gray-600">Email:</span> {offer.buyer?.email || 'Not provided'}
+                  </p>
+                  <p className="text-gray-900 font-medium mt-2">
+                    <span className="text-gray-600">Phone:</span> {offer.buyer?.phone || 'Not provided'}
+                  </p>
+                  
+                  {/* Additional buyer details that show only when accepted */}
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <p className="text-gray-900 font-medium">
+                      <span className="text-gray-600">College:</span> {offer.buyer?.collegename_class || 'Not provided'}
+                    </p>
+                    <p className="text-gray-900 font-medium mt-2">
+                      <span className="text-gray-600">Student ID:</span> {offer.buyer?.id || 'Not provided'}
+                    </p>
+                  </div>
+                </div>
+              )}
+              
+              {/* Show limited info for pending offers */}
+              {offer.status === 'pending' && (
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <div className="flex items-start">
+                    <svg className="h-5 w-5 text-yellow-500 mt-0.5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                    </svg>
+                    <p className="text-yellow-700 text-sm">Buyer contact information will be available after you accept the message.</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
         
         <div className="md:w-1/3 md:text-right md:pl-6">
-          <div className="mb-6">
-            <p className="text-sm text-gray-500 mb-1">Buyer Information</p>
-            <p className="text-lg font-medium text-gray-900">{offer.buyer?.username || 'Unknown User'}</p>
-            <p className="text-gray-600 mt-1">{offer.buyer?.email || 'No email provided'}</p>
-            <p className="text-gray-600">{offer.buyer?.phone || 'No phone provided'}</p>
-          </div>
-          
           <div className="mb-6">
             <p className="text-sm text-gray-500 mb-1">Offer Amount</p>
             <p className="text-3xl font-bold text-blue-600">${offer.offerPrice || '0'}</p>
@@ -289,6 +335,25 @@ const ReceivedOfferItem = React.memo(({ offer, handleRespondToOffer }) => {
               >
                 Reject
               </button>
+            </div>
+          )}
+          
+          {offer.status === 'accepted' && (
+            <div className="bg-green-50 p-5 rounded-xl mb-6 border border-green-200">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-6 w-6 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div className="ml-3 text-left">
+                  <h3 className="text-lg font-medium text-green-800">Message Accepted!</h3>
+                  <div className="mt-2 text-green-700">
+                    <p>Buyer contact information has been shared with you.</p>
+                    <p className="mt-2 font-medium">Please contact the buyer to arrange the transaction.</p>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
           
@@ -384,14 +449,14 @@ const Profile = () => {
       
       setNotification({
         type: 'success',
-        message: `Offer ${status} successfully!`
+        message: `Message ${status} successfully!`
       });
       setTimeout(() => setNotification(null), 3000);
     } catch (err) {
-      console.error('Error responding to offer:', err);
+      console.error('Error responding to message:', err);
       setNotification({
         type: 'error',
-        message: 'Failed to respond to offer. Please try again.'
+        message: 'Failed to respond to message. Please try again.'
       });
       setTimeout(() => setNotification(null), 3000);
     }
@@ -603,7 +668,7 @@ const Profile = () => {
         <div className="mb-10 text-center">
           <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl mb-3">My Profile</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Manage your account and track your book listings and offers
+            Manage your account and track your book listings and messages
           </p>
         </div>
 
@@ -636,7 +701,7 @@ const Profile = () => {
               >
                 <span className="flex items-center">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.218.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.218.a477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.a477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.a477-4.5 1.253" />
                   </svg>
                   My Books ({userBooks.length})
                 </span>
@@ -653,7 +718,7 @@ const Profile = () => {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
-                  Books I Offered On ({booksWithOffers.length})
+                  Books I Messaged On ({booksWithOffers.length})
                 </span>
               </button>
               <button
@@ -668,7 +733,7 @@ const Profile = () => {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                   </svg>
-                  Offers Received ({receivedOffers.length})
+                  Messages Received ({receivedOffers.length})
                 </span>
               </button>
             </nav>
@@ -852,7 +917,7 @@ const Profile = () => {
                 <div className="flex items-center mb-8">
                   <div className="bg-blue-100 rounded-full p-4 mr-5 shadow-md">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.218.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.218.a477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.a477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.a477-4.5 1.253" />
                     </svg>
                   </div>
                   <div>
@@ -864,7 +929,7 @@ const Profile = () => {
                 {userBooks.length === 0 ? (
                   <div className="text-center py-16 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-300">
                     <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-20 w-20 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.218.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.a477-4.5 1.253" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.218.a477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.a477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.a477-4.5 1.253" />
                     </svg>
                     <h3 className="mt-6 text-2xl font-bold text-gray-900">No books listed yet</h3>
                     <p className="mt-3 text-lg text-gray-600 max-w-md mx-auto">
@@ -889,7 +954,7 @@ const Profile = () => {
               </div>
             )}
 
-            {/* Books I Offered On Tab */}
+            {/* Books I Messaged On Tab */}
             {activeTab === 'offers' && (
               <div>
                 <div className="flex items-center mb-8">
@@ -899,8 +964,8 @@ const Profile = () => {
                     </svg>
                   </div>
                   <div>
-                    <h2 className="text-3xl font-bold text-gray-900">Books I Offered On</h2>
-                    <p className="text-gray-600 mt-1">Track the status of your offers on various books</p>
+                    <h2 className="text-3xl font-bold text-gray-900">Books I Messaged On</h2>
+                    <p className="text-gray-600 mt-1">Track the status of your messages on various books</p>
                   </div>
                 </div>
 
@@ -908,7 +973,7 @@ const Profile = () => {
                   <div className="flex justify-center items-center py-16">
                     <div className="text-center">
                       <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-600 mx-auto"></div>
-                      <p className="mt-4 text-lg font-medium text-gray-700">Loading your offers...</p>
+                      <p className="mt-4 text-lg font-medium text-gray-700">Loading your messages...</p>
                     </div>
                   </div>
                 ) : booksWithOffers.length === 0 ? (
@@ -916,9 +981,9 @@ const Profile = () => {
                     <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-20 w-20 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                     </svg>
-                    <h3 className="mt-6 text-2xl font-bold text-gray-900">No offers made yet</h3>
+                    <h3 className="mt-6 text-2xl font-bold text-gray-900">No messages sent yet</h3>
                     <p className="mt-3 text-lg text-gray-600 max-w-md mx-auto">
-                      Start making offers on books you're interested in.
+                      Start sending messages on books you're interested in.
                     </p>
                     <div className="mt-8">
                       <a
@@ -939,7 +1004,7 @@ const Profile = () => {
               </div>
             )}
 
-            {/* Offers Received Tab */}
+            {/* Messages Received Tab */}
             {activeTab === 'received' && (
               <div>
                 <div className="flex items-center mb-8">
@@ -949,8 +1014,8 @@ const Profile = () => {
                     </svg>
                   </div>
                   <div>
-                    <h2 className="text-3xl font-bold text-gray-900">Offers Received</h2>
-                    <p className="text-gray-600 mt-1">Manage offers made on your books</p>
+                    <h2 className="text-3xl font-bold text-gray-900">Messages Received</h2>
+                    <p className="text-gray-600 mt-1">Manage messages sent on your books</p>
                   </div>
                 </div>
 
@@ -958,7 +1023,7 @@ const Profile = () => {
                   <div className="flex justify-center items-center py-16">
                     <div className="text-center">
                       <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-600 mx-auto"></div>
-                      <p className="mt-4 text-lg font-medium text-gray-700">Loading received offers...</p>
+                      <p className="mt-4 text-lg font-medium text-gray-700">Loading received messages...</p>
                     </div>
                   </div>
                 ) : receivedOffers.length === 0 ? (
@@ -966,9 +1031,9 @@ const Profile = () => {
                     <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-20 w-20 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                     </svg>
-                    <h3 className="mt-6 text-2xl font-bold text-gray-900">No offers received yet</h3>
+                    <h3 className="mt-6 text-2xl font-bold text-gray-900">No messages received yet</h3>
                     <p className="mt-3 text-lg text-gray-600 max-w-md mx-auto">
-                      When buyers make offers on your books, they will appear here.
+                      When buyers send messages on your books, they will appear here.
                     </p>
                   </div>
                 ) : (
