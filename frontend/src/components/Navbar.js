@@ -1,5 +1,5 @@
 // frontend/src/components/Navbar.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { BookOpen, User, PlusCircle, Bookmark, Settings, LogOut, LogIn, Menu, X, Home as HomeIcon } from 'lucide-react'; 
@@ -7,6 +7,16 @@ import { BookOpen, User, PlusCircle, Bookmark, Settings, LogOut, LogIn, Menu, X,
 const Navbar = () => {
   const { isAuthenticated, user, logout, loading } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // Check if user is admin whenever user data changes
+  useEffect(() => {
+    if (user && user.isAdmin) {
+      setIsAdmin(true);
+    } else {
+      setIsAdmin(false);
+    }
+  }, [user]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -51,15 +61,17 @@ const Navbar = () => {
   );
 
   return (
-    <nav className="bg-gradient-to-r from-emerald-800 to-teal-600 text-white shadow-xl sticky top-0 z-50">
+    <nav className="bg-gradient-to-r from-emerald-800 to-teal-600 text-white shadow-lg sticky top-0 z-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           
-          {/* Logo - Industrial/Professional Look */}
+          {/* Logo - Modern Professional Look */}
           <Link to="/" className="text-3xl font-extrabold flex items-center tracking-tight">
-            <BookOpen className="h-8 w-8 text-amber-400 mr-2" strokeWidth={2.5} />
-            <span className="hidden sm:inline">Book<span className="text-teal-200">Hub</span></span>
-            <span className="sm:hidden text-teal-200">Book<span className="text-teal-200">Hub</span></span>
+            <div className="bg-white p-1 rounded-lg mr-2">
+              <BookOpen className="h-6 w-6 text-emerald-700" strokeWidth={2.5} />
+            </div>
+            <span className="hidden sm:inline">Book<span className="text-amber-300">Hub</span></span>
+            <span className="sm:hidden text-amber-300">Book<span className="text-amber-300">Hub</span></span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -67,7 +79,7 @@ const Navbar = () => {
             <DesktopLink to="/" icon={HomeIcon}>Home</DesktopLink>
             
             {loading ? (
-              <div className="flex items-center">
+              <div className="flex items-center px-3 py-2">
                 <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2"></div>
                 <span className="text-sm">Loading...</span>
               </div>
@@ -76,7 +88,7 @@ const Navbar = () => {
                 <DesktopLink to="/profile" icon={User}>Profile</DesktopLink>
                 <DesktopLink to="/my-books" icon={Bookmark}>My Books</DesktopLink>
                 
-                {/* CTA Button: High contrast, industrial look */}
+                {/* CTA Button - Modern Look */}
                 <Link 
                   to="/add-book" 
                   className="inline-flex items-center bg-amber-400 text-gray-900 font-bold px-4 py-2 rounded-full shadow-lg hover:bg-amber-300 transition-all duration-200 ml-4 transform hover:scale-105"
@@ -85,7 +97,7 @@ const Navbar = () => {
                   List a Book
                 </Link>
                 
-                {user && user.isAdmin && (
+                {isAdmin && (
                   <DesktopLink to="/admin" icon={Settings}>Admin</DesktopLink>
                 )}
                 
@@ -128,13 +140,13 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation - Animated Dropdown */}
+        {/* Mobile Navigation - Improved Dropdown */}
         <div 
           className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
-            isMenuOpen ? 'max-h-screen opacity-100 py-2 border-t border-emerald-700' : 'max-h-0 opacity-0'
+            isMenuOpen ? 'max-h-screen opacity-100 py-4 border-t border-emerald-700' : 'max-h-0 opacity-0'
           }`}
         >
-          <div className="flex flex-col space-y-1">
+          <div className="flex flex-col space-y-2">
             <MobileLink to="/" icon={HomeIcon}>Home</MobileLink>
             
             {loading ? (
@@ -146,10 +158,11 @@ const Navbar = () => {
               <>
                 <MobileLink to="/profile" icon={User}>Profile</MobileLink>
                 <MobileLink to="/my-books" icon={Bookmark}>My Listings</MobileLink>
+                
                 {/* Mobile CTA */}
                 <MobileLink to="/add-book" icon={PlusCircle} isPrimary={true}>List a New Book</MobileLink> 
                 
-                {user && user.isAdmin && (
+                {isAdmin && (
                   <MobileLink to="/admin" icon={Settings}>Admin Tools</MobileLink>
                 )}
                 
@@ -164,6 +177,7 @@ const Navbar = () => {
             ) : (
               <>
                 <MobileLink to="/login" icon={LogIn}>Login</MobileLink>
+                
                 {/* Mobile Register Button */}
                 <MobileLink to="/register" icon={User} isPrimary={true}>Create Account (Register)</MobileLink>
               </>

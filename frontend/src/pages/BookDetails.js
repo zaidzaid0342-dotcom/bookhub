@@ -8,13 +8,13 @@ const BookDetails = () => {
   const { id } = useParams();
   const [book, setBook] = useState(null);
   const [offers, setOffers] = useState([]);
-  const [message, setMessage] = useState(''); // Changed from offerPrice to message
+  const [message, setMessage] = useState('');
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [notification, setNotification] = useState(null);
   const [buyerAcceptedNotification, setBuyerAcceptedNotification] = useState(null);
-  const [showBuyerDetails, setShowBuyerDetails] = useState({}); // Track which buyer details to show
+  const [showBuyerDetails, setShowBuyerDetails] = useState({});
   const { isAuthenticated, user } = useAuth();
 
   useEffect(() => {
@@ -22,7 +22,6 @@ const BookDetails = () => {
       try {
         setLoading(true);
         const res = await getBookById(id);
-        console.log('Book data received:', res.data);
         setBook(res.data);
       } catch (err) {
         console.error('Error fetching book:', err);
@@ -37,12 +36,9 @@ const BookDetails = () => {
   useEffect(() => {
     const fetchOffers = async () => {
       try {
-        console.log('Fetching offers for book ID:', id);
         const res = await getBookOffers(id);
-        console.log('Offers data:', res.data);
         setOffers(res.data);
         
-        // Initialize showBuyerDetails state
         const detailsState = {};
         res.data.forEach(offer => {
           detailsState[offer._id] = offer.status === 'accepted';
@@ -55,10 +51,8 @@ const BookDetails = () => {
     fetchOffers();
   }, [id]);
 
-  // Check if current user has an accepted offer
   useEffect(() => {
     if (isAuthenticated && user && offers.length > 0) {
-      // Check if user is the buyer of any accepted offer
       const acceptedOffer = offers.find(offer => 
         offer.status === 'accepted' && 
         (offer.buyer === user.id || 
@@ -81,13 +75,6 @@ const BookDetails = () => {
     }
   }, [offers, isAuthenticated, user, book]);
 
-  // Debug information
-  console.log('Debug Info:');
-  console.log('User:', user);
-  console.log('Book seller:', book?.seller);
-  console.log('Is authenticated:', isAuthenticated);
-  console.log('Is seller condition:', isAuthenticated && user && book?.seller && (user.id === book?.seller?.id || user.id === book?.seller));
-
   const isSeller = isAuthenticated && user && book?.seller && 
                    (user.id === book.seller.id || user.id === book.seller);
 
@@ -97,12 +84,8 @@ const BookDetails = () => {
         setError('Please enter a message');
         return;
       }
-
-      console.log('Sending message for book ID:', id);
-      console.log('Message:', message);
-      console.log('User:', user);
       
-      await makeOffer(id, { message: message.trim() }); // Changed from offerPrice to message
+      await makeOffer(id, { message: message.trim() });
       setMessage('');
       setSuccess(true);
       setError('');
@@ -112,20 +95,17 @@ const BookDetails = () => {
       setOffers(res.data);
     } catch (err) {
       console.error('Error sending message:', err);
-      console.error('Error response:', err.response?.data);
       setError(err.response?.data?.msg || 'Failed to send message');
     }
   };
 
   const handleRespondToOffer = async (offerId, status) => {
     try {
-      console.log(`Responding to message ${offerId} with status: ${status}`);
       await respondToOffer(offerId, { status });
       
       const res = await getBookOffers(id);
       setOffers(res.data);
       
-      // Update showBuyerDetails state
       setShowBuyerDetails(prev => ({
         ...prev,
         [offerId]: status === 'accepted'
@@ -135,14 +115,12 @@ const BookDetails = () => {
         const bookRes = await getBookById(id);
         setBook(bookRes.data);
         
-        // Set notification for successful deal
         setNotification({
           type: 'success',
           message: 'Message accepted successfully! Contact information has been shared with both parties.',
           offerId: offerId
         });
         
-        // Clear notification after 5 seconds
         setTimeout(() => setNotification(null), 5000);
       }
     } catch (err) {
@@ -297,8 +275,8 @@ const BookDetails = () => {
               </div>
             </div>
             <div className="md:w-1/2 p-8">
-              <div className="flex justify-between items-start mb-6">
-                <div>
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-6">
+                <div className="mb-4 sm:mb-0">
                   <h1 className="text-3xl font-bold text-gray-900 mb-3">{book.bookName}</h1>
                   <div className="flex flex-wrap gap-2">
                     <span className="bg-blue-100 text-blue-800 text-sm font-bold px-4 py-2 rounded-full shadow-sm">
@@ -311,7 +289,7 @@ const BookDetails = () => {
                     )}
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="text-center sm:text-right">
                   <p className="text-3xl font-bold text-gray-900">${book.price}</p>
                   <p className="text-gray-500 text-sm mt-1">Listed Price</p>
                 </div>
@@ -353,11 +331,10 @@ const BookDetails = () => {
               <div className="mb-8">
                 <h2 className="text-xl font-bold text-gray-900 mb-4 pb-2 border-b-2 border-gray-100">Seller Information</h2>
                 {isSeller ? (
-                  // Show full seller details only to the seller
                   book.seller ? (
                     <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-5 rounded-xl shadow-sm border border-blue-100">
-                      <div className="flex items-center mb-4">
-                        <div className="bg-blue-100 rounded-full p-3 mr-4 shadow-md">
+                      <div className="flex flex-col sm:flex-row sm:items-center mb-4">
+                        <div className="bg-blue-100 rounded-full p-3 mr-4 shadow-md mb-3 sm:mb-0">
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                           </svg>
@@ -367,7 +344,7 @@ const BookDetails = () => {
                           <p className="text-gray-600">{book.seller.city || 'Unknown'}, {book.seller.state || 'Unknown'}</p>
                         </div>
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-gray-700">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-gray-700">
                         <div className="flex items-center">
                           <svg className="w-5 h-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
@@ -393,10 +370,9 @@ const BookDetails = () => {
                    offer.buyer?._id === user.id || 
                    offer.buyer?.id === user.id)
                 ) ? (
-                  // Show seller details to the buyer if their message is accepted
                   <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-5 rounded-xl shadow-sm border border-green-100">
-                    <div className="flex items-center mb-4">
-                      <div className="bg-green-100 rounded-full p-3 mr-4 shadow-md">
+                    <div className="flex flex-col sm:flex-row sm:items-center mb-4">
+                      <div className="bg-green-100 rounded-full p-3 mr-4 shadow-md mb-3 sm:mb-0">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                         </svg>
@@ -406,7 +382,7 @@ const BookDetails = () => {
                         <p className="text-gray-600">{book.seller?.city || 'Unknown'}, {book.seller?.state || 'Unknown'}</p>
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-gray-700">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-gray-700">
                       <div className="flex items-center">
                         <svg className="w-5 h-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
@@ -424,7 +400,6 @@ const BookDetails = () => {
                     </div>
                   </div>
                 ) : (
-                  // Show limited info to other users
                   <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-5 rounded-xl shadow-sm border border-blue-100">
                     <div className="flex">
                       <div className="flex-shrink-0">
@@ -489,8 +464,8 @@ const BookDetails = () => {
         {/* Messages Section - Only visible to the book owner/seller */}
         {isSeller && (
           <div className="mt-10 bg-white rounded-2xl shadow-xl p-8">
-            <div className="flex justify-between items-center mb-8 pb-4 border-b-2 border-gray-100">
-              <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8 pb-4 border-b-2 border-gray-100">
+              <h2 className="text-2xl font-bold text-gray-900 flex items-center mb-4 sm:mb-0">
                 <svg className="w-6 h-6 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                 </svg>
@@ -516,8 +491,8 @@ const BookDetails = () => {
                     <div className="flex flex-col md:flex-row md:justify-between md:items-start">
                       {/* Buyer Information */}
                       <div className="mb-6 md:mb-0 md:w-2/3">
-                        <div className="flex items-center mb-4">
-                          <div className="bg-gradient-to-r from-green-100 to-emerald-100 rounded-full p-3 mr-4 shadow-md">
+                        <div className="flex flex-col sm:flex-row sm:items-center mb-4">
+                          <div className="bg-gradient-to-r from-green-100 to-emerald-100 rounded-full p-3 mr-4 shadow-md mb-3 sm:mb-0">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
@@ -538,7 +513,6 @@ const BookDetails = () => {
                             <p className="font-bold text-gray-800">{offer.buyer?.id || 'Unknown'}</p>
                           </div>
                           
-                          {/* Conditionally show contact details - only after message is accepted */}
                           {showBuyerDetails[offer._id] && (
                             <>
                               <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
@@ -553,7 +527,6 @@ const BookDetails = () => {
                           )}
                         </div>
                         
-                        {/* Additional Buyer Details - only show if message is accepted */}
                         {showBuyerDetails[offer._id] && (
                           <div className="mt-6 bg-gradient-to-r from-blue-50 to-indigo-50 p-5 rounded-xl shadow-sm border border-blue-100">
                             <h4 className="font-bold text-blue-800 mb-3 flex items-center">
@@ -596,7 +569,7 @@ const BookDetails = () => {
                         </div>
                         
                         {offer.status === 'pending' && (
-                          <div className="flex flex-col md:flex-row md:justify-end space-y-3 md:space-y-0 md:space-x-3">
+                          <div className="flex flex-col sm:flex-row md:flex-col lg:flex-row space-y-3 sm:space-y-0 sm:space-x-3 md:space-y-3 md:space-x-0 lg:space-y-0 lg:space-x-3">
                             <button
                               onClick={() => handleRespondToOffer(offer._id, 'accepted')}
                               className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-bold rounded-lg text-white bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-300 transform hover:scale-105 shadow-md"
@@ -637,7 +610,6 @@ const BookDetails = () => {
                           </div>
                         )}
                         
-                        {/* Toggle button for buyer details - only show after message is accepted */}
                         {offer.status === 'accepted' && (
                           <button
                             onClick={() => toggleBuyerDetails(offer._id)}
@@ -647,7 +619,7 @@ const BookDetails = () => {
                               <>
                                 <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5,12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                 </svg>
                                 Hide Details
                               </>
@@ -674,13 +646,13 @@ const BookDetails = () => {
         {/* Authentication Message */}
         {!isAuthenticated && (
           <div className="mt-10 bg-gradient-to-r from-yellow-50 to-amber-50 border-l-4 border-yellow-400 p-6 rounded-xl shadow-md">
-            <div className="flex">
-              <div className="flex-shrink-0">
+            <div className="flex flex-col sm:flex-row">
+              <div className="flex-shrink-0 mb-4 sm:mb-0">
                 <svg className="h-8 w-8 text-yellow-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0v-1a1 1 0 012 0v1zm0-3a1 1 0 11-2 0V8a1 1 0 012 0v2z" clipRule="evenodd" />
                 </svg>
               </div>
-              <div className="ml-4">
+              <div className="ml-0 sm:ml-4">
                 <h3 className="text-lg font-bold text-yellow-800">Authentication Required</h3>
                 <div className="mt-2 text-yellow-700">
                   <p className="font-medium">You need to be logged in to send messages. If you are the seller of this book, please log in to view and respond to messages.</p>

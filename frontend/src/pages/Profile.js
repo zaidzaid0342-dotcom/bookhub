@@ -5,8 +5,8 @@ import { getUserProfile, updateUserProfile, getUserBooks, getBookOffers, getUser
 // Memoized Book Card Component
 const BookCard = React.memo(({ book }) => {
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-      <div className="h-56 bg-gray-200 relative overflow-hidden">
+    <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 h-full flex flex-col">
+      <div className="h-48 sm:h-56 bg-gray-200 relative overflow-hidden flex-shrink-0">
         {book.image ? (
           <img 
             src={`${process.env.REACT_APP_API_URL.replace('/api', '')}/${book.image}`} 
@@ -17,28 +17,28 @@ const BookCard = React.memo(({ book }) => {
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.218.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.a477-4.5 1.253" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.218.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
             </svg>
           </div>
         )}
-        <div className="absolute top-4 right-4">
-          <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium shadow-sm ${
+        <div className="absolute top-3 right-3">
+          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium shadow-sm ${
             book.status === 'available' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
           }`}>
             {book.status || 'Unknown'}
           </span>
         </div>
       </div>
-      <div className="p-6 bg-white">
-        <h3 className="text-xl font-bold text-gray-900 mb-2">{book.bookName || 'Untitled Book'}</h3>
-        <p className="text-gray-600 mb-4">{book.category || 'Uncategorized'}</p>
-        <div className="flex justify-between items-center mb-5">
-          <span className="text-2xl font-bold text-blue-600">${book.price || '0'}</span>
+      <div className="p-4 bg-white flex-grow flex flex-col">
+        <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 line-clamp-2">{book.bookName || 'Untitled Book'}</h3>
+        <p className="text-gray-600 mb-4 text-sm">{book.category || 'Uncategorized'}</p>
+        <div className="flex justify-between items-center mb-4 mt-auto">
+          <span className="text-xl sm:text-2xl font-bold text-blue-600">${book.price || '0'}</span>
         </div>
-        <div className="flex justify-between">
+        <div className="flex justify-center">
           <a
             href={`/book/${book._id}`}
-            className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300"
+            className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 w-full justify-center"
           >
             View Details
           </a>
@@ -48,7 +48,7 @@ const BookCard = React.memo(({ book }) => {
   );
 });
 
-// Helper function to get offer status (can be used outside of components)
+// Helper function to get offer status
 const getOfferStatus = (status) => {
   if (status === 'pending') {
     return { 
@@ -88,7 +88,7 @@ const OfferStatus = React.memo(({ status }) => {
   const statusInfo = useMemo(() => getOfferStatus(status), [status]);
   
   return (
-    <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusInfo.color}`}>
+    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${statusInfo.color}`}>
       {statusInfo.icon}
       <span className="ml-1">{statusInfo.text}</span>
     </span>
@@ -108,43 +108,43 @@ const OfferItem = React.memo(({ book, offers }) => {
   }, [latestOffer]);
 
   return (
-    <div className="border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+    <div className="border border-gray-200 rounded-xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300">
       <div className="flex flex-col md:flex-row md:justify-between md:items-start">
         <div className="mb-6 md:mb-0 md:w-2/3">
-          <div className="flex items-center mb-4">
-            <div className="bg-gray-100 rounded-xl p-3 mr-4 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center mb-4">
+            <div className="bg-gray-100 rounded-xl p-3 mr-4 shadow-sm mb-3 sm:mb-0">
               {book.image ? (
                 <img 
                   src={`${process.env.REACT_APP_API_URL.replace('/api', '')}/${book.image}`} 
                   alt={book.bookName} 
-                  className="w-20 h-20 object-cover rounded-lg"
+                  className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg"
                   loading="lazy"
                 />
               ) : (
-                <div className="w-20 h-20 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.218.a477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.a477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.a477-4.5 1.253" />
+                <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 sm:h-10 sm:w-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.218.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                   </svg>
                 </div>
               )}
             </div>
             <div>
-              <h3 className="text-xl font-bold text-gray-900">{book.bookName || 'Untitled Book'}</h3>
-              <p className="text-gray-600">{book.category || 'Uncategorized'}</p>
-              <p className="text-gray-600 mt-1">Seller: {book.seller?.username || 'Unknown'}</p>
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900 line-clamp-2">{book.bookName || 'Untitled Book'}</h3>
+              <p className="text-gray-600 text-sm">{book.category || 'Uncategorized'}</p>
+              <p className="text-gray-600 mt-1 text-sm">Seller: {book.seller?.username || 'Unknown'}</p>
             </div>
           </div>
           
-          <div className="mt-6">
-            <h4 className="text-lg font-medium text-gray-800 mb-3">Your Messages:</h4>
+          <div className="mt-4">
+            <h4 className="text-base sm:text-lg font-medium text-gray-800 mb-3">Your Messages:</h4>
             <div className="space-y-3">
               {offers.map((offer) => (
-                <div key={offer._id} className="flex justify-between items-center bg-gray-50 p-4 rounded-lg border border-gray-200">
-                  <div className="flex-1">
-                    <p className="text-sm text-gray-500">
+                <div key={offer._id} className="flex flex-col sm:flex-row sm:justify-between sm:items-center bg-gray-50 p-3 rounded-lg border border-gray-200">
+                  <div className="flex-1 mb-2 sm:mb-0">
+                    <p className="text-xs text-gray-500">
                       {new Date(offer.createdAt).toLocaleDateString()}
                     </p>
-                    <p className="text-gray-700 mt-1 truncate" title={offer.message || 'No message'}>
+                    <p className="text-gray-700 mt-1 text-sm line-clamp-2" title={offer.message || 'No message'}>
                       {offer.message || 'No message'}
                     </p>
                   </div>
@@ -157,15 +157,15 @@ const OfferItem = React.memo(({ book, offers }) => {
         
         <div className="md:w-1/3 md:text-right md:pl-6">
           <div className="mb-6">
-            <p className="text-sm text-gray-500 mb-1">Latest Message</p>
-            <p className="text-lg font-medium text-gray-900 truncate" title={latestOffer?.message || 'No message'}>
+            <p className="text-xs text-gray-500 mb-1">Latest Message</p>
+            <p className="text-base sm:text-lg font-medium text-gray-900 line-clamp-3" title={latestOffer?.message || 'No message'}>
               {latestOffer?.message || 'No message'}
             </p>
           </div>
           
           <div className="mb-6">
             {status && (
-              <span className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ${status.color}`}>
+              <span className={`inline-flex items-center px-3 py-2 rounded-full text-xs font-medium ${status.color}`}>
                 {status.icon}
                 <span className="ml-2">{status.text}</span>
               </span>
@@ -173,16 +173,16 @@ const OfferItem = React.memo(({ book, offers }) => {
           </div>
           
           {latestOffer?.status === 'accepted' && (
-            <div className="bg-green-50 p-5 rounded-xl mb-6 border border-green-200">
+            <div className="bg-green-50 p-4 rounded-xl mb-6 border border-green-200">
               <div className="flex">
                 <div className="flex-shrink-0">
-                  <svg className="h-6 w-6 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
                 <div className="ml-3 text-left">
-                  <h3 className="text-lg font-medium text-green-800">Message Accepted!</h3>
-                  <div className="mt-2 text-green-700">
+                  <h3 className="text-base font-medium text-green-800">Message Accepted!</h3>
+                  <div className="mt-2 text-green-700 text-sm">
                     <p>Congratulations! Your message has been accepted by the seller.</p>
                     <p className="mt-2 font-medium">Contact the seller to arrange pickup:</p>
                     <p className="mt-1">Email: {book.seller?.email || 'Not provided'}</p>
@@ -194,16 +194,16 @@ const OfferItem = React.memo(({ book, offers }) => {
           )}
           
           {latestOffer?.status === 'rejected' && (
-            <div className="bg-red-50 p-5 rounded-xl mb-6 border border-red-200">
+            <div className="bg-red-50 p-4 rounded-xl mb-6 border border-red-200">
               <div className="flex">
                 <div className="flex-shrink-0">
-                  <svg className="h-6 w-6 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
                 <div className="ml-3 text-left">
-                  <h3 className="text-lg font-medium text-red-800">Message Rejected</h3>
-                  <div className="mt-2 text-red-700">
+                  <h3 className="text-base font-medium text-red-800">Message Rejected</h3>
+                  <div className="mt-2 text-red-700 text-sm">
                     <p>Unfortunately, the seller has rejected your message.</p>
                     <p className="mt-2">You can browse other similar books or send a new message on this book if it's still available.</p>
                   </div>
@@ -215,7 +215,7 @@ const OfferItem = React.memo(({ book, offers }) => {
           <div className="mt-6">
             <a
               href={`/book/${book._id}`}
-              className="inline-flex items-center px-5 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 w-full md:w-auto justify-center"
+              className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 w-full md:w-auto justify-center"
             >
               View Book Details
             </a>
@@ -232,64 +232,64 @@ const ReceivedOfferItem = React.memo(({ offer, handleRespondToOffer }) => {
   const [showBuyerDetails, setShowBuyerDetails] = useState(false);
 
   return (
-    <div className="border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+    <div className="border border-gray-200 rounded-xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300">
       <div className="flex flex-col md:flex-row md:justify-between md:items-start">
         <div className="mb-6 md:mb-0 md:w-2/3">
-          <div className="flex items-center mb-4">
-            <div className="bg-gray-100 rounded-xl p-3 mr-4 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center mb-4">
+            <div className="bg-gray-100 rounded-xl p-3 mr-4 shadow-sm mb-3 sm:mb-0">
               {offer.book?.image ? (
                 <img 
                   src={`${process.env.REACT_APP_API_URL.replace('/api', '')}/${offer.book.image}`} 
                   alt={offer.book.bookName} 
-                  className="w-20 h-20 object-cover rounded-lg"
+                  className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg"
                   loading="lazy"
                 />
               ) : (
-                <div className="w-20 h-20 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.218.a477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.a477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.a477-4.5 1.253" />
+                <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 sm:h-10 sm:w-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.218.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                   </svg>
                 </div>
               )}
             </div>
             <div>
-              <h3 className="text-xl font-bold text-gray-900">{offer.book?.bookName || 'Untitled Book'}</h3>
-              <p className="text-gray-600">{offer.book?.category || 'Uncategorized'}</p>
-              <p className="text-gray-600 mt-1">Your Book</p>
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900 line-clamp-2">{offer.book?.bookName || 'Untitled Book'}</h3>
+              <p className="text-gray-600 text-sm">{offer.book?.category || 'Uncategorized'}</p>
+              <p className="text-gray-600 mt-1 text-sm">Your Book</p>
             </div>
           </div>
           
           {/* Message Section */}
-          <div className="mt-6 mb-6">
-            <h4 className="text-lg font-medium text-gray-800 mb-2">Message from Buyer:</h4>
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <p className="text-gray-700">{offer.message || 'No message provided'}</p>
+          <div className="mt-4 mb-4">
+            <h4 className="text-base sm:text-lg font-medium text-gray-800 mb-2">Message from Buyer:</h4>
+            <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+              <p className="text-gray-700 text-sm">{offer.message || 'No message provided'}</p>
             </div>
           </div>
           
           {/* Buyer Information Section */}
-          <div className="mt-6 mb-6">
-            <h4 className="text-lg font-medium text-gray-800 mb-2">Buyer Information</h4>
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <p className="text-gray-900 font-medium">{offer.buyer?.username || 'Unknown User'}</p>
-              <p className="text-gray-600 mt-1">{offer.buyer?.city || 'Unknown'}, {offer.buyer?.state || 'Unknown'}</p>
+          <div className="mt-4 mb-4">
+            <h4 className="text-base sm:text-lg font-medium text-gray-800 mb-2">Buyer Information</h4>
+            <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+              <p className="text-gray-900 font-medium text-sm">{offer.buyer?.username || 'Unknown User'}</p>
+              <p className="text-gray-600 mt-1 text-sm">{offer.buyer?.city || 'Unknown'}, {offer.buyer?.state || 'Unknown'}</p>
               
               {/* Show contact details only if offer is accepted */}
               {offer.status === 'accepted' && (
-                <div className="mt-4 pt-4 border-t border-gray-200">
-                  <p className="text-gray-900 font-medium">
+                <div className="mt-3 pt-3 border-t border-gray-200">
+                  <p className="text-gray-900 font-medium text-sm">
                     <span className="text-gray-600">Email:</span> {offer.buyer?.email || 'Not provided'}
                   </p>
-                  <p className="text-gray-900 font-medium mt-2">
+                  <p className="text-gray-900 font-medium mt-2 text-sm">
                     <span className="text-gray-600">Phone:</span> {offer.buyer?.phone || 'Not provided'}
                   </p>
                   
                   {/* Additional buyer details that show only when accepted */}
-                  <div className="mt-4 pt-4 border-t border-gray-200">
-                    <p className="text-gray-900 font-medium">
+                  <div className="mt-3 pt-3 border-t border-gray-200">
+                    <p className="text-gray-900 font-medium text-sm">
                       <span className="text-gray-600">College:</span> {offer.buyer?.collegename_class || 'Not provided'}
                     </p>
-                    <p className="text-gray-900 font-medium mt-2">
+                    <p className="text-gray-900 font-medium mt-2 text-sm">
                       <span className="text-gray-600">Student ID:</span> {offer.buyer?.id || 'Not provided'}
                     </p>
                   </div>
@@ -298,12 +298,12 @@ const ReceivedOfferItem = React.memo(({ offer, handleRespondToOffer }) => {
               
               {/* Show limited info for pending offers */}
               {offer.status === 'pending' && (
-                <div className="mt-4 pt-4 border-t border-gray-200">
+                <div className="mt-3 pt-3 border-t border-gray-200">
                   <div className="flex items-start">
-                    <svg className="h-5 w-5 text-yellow-500 mt-0.5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <svg className="h-4 w-4 text-yellow-500 mt-0.5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                     </svg>
-                    <p className="text-yellow-700 text-sm">Buyer contact information will be available after you accept the message.</p>
+                    <p className="text-yellow-700 text-xs">Buyer contact information will be available after you accept the message.</p>
                   </div>
                 </div>
               )}
@@ -313,8 +313,8 @@ const ReceivedOfferItem = React.memo(({ offer, handleRespondToOffer }) => {
         
         <div className="md:w-1/3 md:text-right md:pl-6">
           <div className="mb-6">
-            <p className="text-sm text-gray-500 mb-1">Offer Amount</p>
-            <p className="text-3xl font-bold text-blue-600">${offer.offerPrice || '0'}</p>
+            <p className="text-xs text-gray-500 mb-1">Offer Amount</p>
+            <p className="text-2xl sm:text-3xl font-bold text-blue-600">${offer.offerPrice || '0'}</p>
           </div>
           
           <div className="mb-6">
@@ -325,13 +325,13 @@ const ReceivedOfferItem = React.memo(({ offer, handleRespondToOffer }) => {
             <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
               <button 
                 onClick={() => handleRespondToOffer(offer._id, 'accepted')}
-                className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-300 flex-1"
+                className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-300 flex-1"
               >
                 Accept
               </button>
               <button 
                 onClick={() => handleRespondToOffer(offer._id, 'rejected')}
-                className="inline-flex items-center justify-center px-5 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 flex-1"
+                className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 flex-1"
               >
                 Reject
               </button>
@@ -339,16 +339,16 @@ const ReceivedOfferItem = React.memo(({ offer, handleRespondToOffer }) => {
           )}
           
           {offer.status === 'accepted' && (
-            <div className="bg-green-50 p-5 rounded-xl mb-6 border border-green-200">
+            <div className="bg-green-50 p-4 rounded-xl mb-6 border border-green-200">
               <div className="flex">
                 <div className="flex-shrink-0">
-                  <svg className="h-6 w-6 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
                 <div className="ml-3 text-left">
-                  <h3 className="text-lg font-medium text-green-800">Message Accepted!</h3>
-                  <div className="mt-2 text-green-700">
+                  <h3 className="text-base font-medium text-green-800">Message Accepted!</h3>
+                  <div className="mt-2 text-green-700 text-sm">
                     <p>Buyer contact information has been shared with you.</p>
                     <p className="mt-2 font-medium">Please contact the buyer to arrange the transaction.</p>
                   </div>
@@ -360,7 +360,7 @@ const ReceivedOfferItem = React.memo(({ offer, handleRespondToOffer }) => {
           <div className="mt-6">
             <a
               href={`/book/${offer.book?._id}`}
-              className="inline-flex items-center px-5 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 w-full md:w-auto justify-center"
+              className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 w-full md:w-auto justify-center"
             >
               View Book Details
             </a>
@@ -635,26 +635,26 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-4 sm:py-8 px-3 sm:px-6 lg:px-8">
       {/* Notification */}
       {notification && (
-        <div className={`fixed top-6 right-6 z-50 p-5 rounded-xl shadow-xl transform transition-all duration-300 ${
+        <div className={`fixed top-4 right-4 z-50 p-4 rounded-xl shadow-xl transform transition-all duration-300 max-w-xs sm:max-w-sm ${
           notification.type === 'success' ? 'bg-green-50 border-l-4 border-green-500' : 'bg-red-50 border-l-4 border-red-500'
         }`}>
           <div className="flex items-center">
             <div className="flex-shrink-0">
               {notification.type === 'success' ? (
-                <svg className="h-6 w-6 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               ) : (
-                <svg className="h-6 w-6 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               )}
             </div>
             <div className="ml-3">
-              <p className={`text-base font-medium ${
+              <p className={`text-sm font-medium ${
                 notification.type === 'success' ? 'text-green-800' : 'text-red-800'
               }`}>
                 {notification.message}
@@ -665,9 +665,9 @@ const Profile = () => {
       )}
 
       <div className="max-w-7xl mx-auto">
-        <div className="mb-10 text-center">
-          <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl mb-3">My Profile</h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+        <div className="mb-6 sm:mb-10 text-center">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-2 sm:mb-3">My Profile</h1>
+          <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
             Manage your account and track your book listings and messages
           </p>
         </div>
@@ -678,94 +678,94 @@ const Profile = () => {
             <nav className="flex -mb-px overflow-x-auto">
               <button
                 onClick={() => setActiveTab('profile')}
-                className={`py-5 px-8 text-center border-b-2 font-medium text-sm transition-colors duration-200 whitespace-nowrap ${
+                className={`py-3 sm:py-5 px-4 sm:px-8 text-center border-b-2 font-medium text-sm transition-colors duration-200 whitespace-nowrap ${
                   activeTab === 'profile'
                     ? 'border-blue-600 text-blue-600 bg-white'
                     : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
                 }`}
               >
                 <span className="flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
-                  Profile Information
+                  <span className="text-sm sm:text-base">Profile</span>
                 </span>
               </button>
               <button
                 onClick={() => setActiveTab('books')}
-                className={`py-5 px-8 text-center border-b-2 font-medium text-sm transition-colors duration-200 whitespace-nowrap ${
+                className={`py-3 sm:py-5 px-4 sm:px-8 text-center border-b-2 font-medium text-sm transition-colors duration-200 whitespace-nowrap ${
                   activeTab === 'books'
                     ? 'border-blue-600 text-blue-600 bg-white'
                     : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
                 }`}
               >
                 <span className="flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.218.a477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.a477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.a477-4.5 1.253" />
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.218.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                   </svg>
-                  My Books ({userBooks.length})
+                  <span className="text-sm sm:text-base">My Books ({userBooks.length})</span>
                 </span>
               </button>
               <button
                 onClick={() => setActiveTab('offers')}
-                className={`py-5 px-8 text-center border-b-2 font-medium text-sm transition-colors duration-200 whitespace-nowrap ${
+                className={`py-3 sm:py-5 px-4 sm:px-8 text-center border-b-2 font-medium text-sm transition-colors duration-200 whitespace-nowrap ${
                   activeTab === 'offers'
                     ? 'border-blue-600 text-blue-600 bg-white'
                     : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
                 }`}
               >
                 <span className="flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
-                  Books I Messaged On ({booksWithOffers.length})
+                  <span className="text-sm sm:text-base">My Messages ({booksWithOffers.length})</span>
                 </span>
               </button>
               <button
                 onClick={() => setActiveTab('received')}
-                className={`py-5 px-8 text-center border-b-2 font-medium text-sm transition-colors duration-200 whitespace-nowrap ${
+                className={`py-3 sm:py-5 px-4 sm:px-8 text-center border-b-2 font-medium text-sm transition-colors duration-200 whitespace-nowrap ${
                   activeTab === 'received'
                     ? 'border-blue-600 text-blue-600 bg-white'
                     : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
                 }`}
               >
                 <span className="flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                   </svg>
-                  Messages Received ({receivedOffers.length})
+                  <span className="text-sm sm:text-base">Received ({receivedOffers.length})</span>
                 </span>
               </button>
             </nav>
           </div>
 
           {/* Tab Content */}
-          <div className="p-6 md:p-8">
+          <div className="p-4 sm:p-6 md:p-8">
             {/* Profile Tab */}
             {activeTab === 'profile' && (
               <div className="max-w-4xl mx-auto">
-                <div className="flex items-center mb-10">
-                  <div className="bg-blue-100 rounded-full p-4 mr-5 shadow-md">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="flex flex-col sm:flex-row items-center mb-8 sm:mb-10">
+                  <div className="bg-blue-100 rounded-full p-3 sm:p-4 mr-0 sm:mr-5 mb-4 sm:mb-0 shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 sm:h-12 sm:w-12 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                   </div>
-                  <div>
-                    <h2 className="text-3xl font-bold text-gray-900">Personal Information</h2>
-                    <p className="text-gray-600 mt-1">Update your account details and contact information</p>
+                  <div className="text-center sm:text-left">
+                    <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Personal Information</h2>
+                    <p className="text-gray-600 mt-1 text-sm sm:text-base">Update your account details and contact information</p>
                   </div>
                 </div>
 
                 {success && (
-                  <div className="mb-8 bg-green-50 border-l-4 border-green-500 p-5 rounded-lg shadow-sm">
+                  <div className="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-lg shadow-sm">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
-                        <svg className="h-6 w-6 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                       </div>
                       <div className="ml-3">
-                        <p className="text-base font-medium text-green-800">
+                        <p className="text-sm font-medium text-green-800">
                           Profile updated successfully!
                         </p>
                       </div>
@@ -774,15 +774,15 @@ const Profile = () => {
                 )}
 
                 {error && (
-                  <div className="mb-8 bg-red-50 border-l-4 border-red-500 p-5 rounded-lg shadow-sm">
+                  <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-lg shadow-sm">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
-                        <svg className="h-6 w-6 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                       </div>
                       <div className="ml-3">
-                        <p className="text-base font-medium text-red-800">
+                        <p className="text-sm font-medium text-red-800">
                           {error}
                         </p>
                       </div>
@@ -790,8 +790,8 @@ const Profile = () => {
                   </div>
                 )}
 
-                <form onSubmit={onSubmit} className="space-y-8">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <form onSubmit={onSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 gap-6">
                     <div>
                       <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">Username</label>
                       <input
@@ -902,7 +902,7 @@ const Profile = () => {
                   <div className="flex justify-end pt-4">
                     <button
                       type="submit"
-                      className="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300"
+                      className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300"
                     >
                       Update Profile
                     </button>
@@ -914,38 +914,38 @@ const Profile = () => {
             {/* My Books Tab */}
             {activeTab === 'books' && (
               <div>
-                <div className="flex items-center mb-8">
-                  <div className="bg-blue-100 rounded-full p-4 mr-5 shadow-md">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.218.a477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.a477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.a477-4.5 1.253" />
+                <div className="flex flex-col sm:flex-row items-center mb-6 sm:mb-8">
+                  <div className="bg-blue-100 rounded-full p-3 sm:p-4 mr-0 sm:mr-5 mb-4 sm:mb-0 shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 sm:h-12 sm:w-12 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.218.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                     </svg>
                   </div>
-                  <div>
-                    <h2 className="text-3xl font-bold text-gray-900">My Books</h2>
-                    <p className="text-gray-600 mt-1">Manage your book listings and track their status</p>
+                  <div className="text-center sm:text-left">
+                    <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">My Books</h2>
+                    <p className="text-gray-600 mt-1 text-sm sm:text-base">Manage your book listings and track their status</p>
                   </div>
                 </div>
 
                 {userBooks.length === 0 ? (
-                  <div className="text-center py-16 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-20 w-20 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.218.a477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.a477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.a477-4.5 1.253" />
+                  <div className="text-center py-12 sm:py-16 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.218.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                     </svg>
-                    <h3 className="mt-6 text-2xl font-bold text-gray-900">No books listed yet</h3>
-                    <p className="mt-3 text-lg text-gray-600 max-w-md mx-auto">
+                    <h3 className="mt-6 text-xl sm:text-2xl font-bold text-gray-900">No books listed yet</h3>
+                    <p className="mt-3 text-base sm:text-lg text-gray-600 max-w-md mx-auto">
                       Start selling your books by adding them to our marketplace.
                     </p>
-                    <div className="mt-8">
+                    <div className="mt-6 sm:mt-8">
                       <a
                         href="/add-book"
-                        className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300"
+                        className="inline-flex items-center px-5 py-2 sm:px-6 sm:py-3 border border-transparent text-sm sm:text-base font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300"
                       >
                         Add Your First Book
                       </a>
                     </div>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {userBooks.map((book) => (
                       <BookCard key={book._id} book={book} />
                     ))}
@@ -957,45 +957,45 @@ const Profile = () => {
             {/* Books I Messaged On Tab */}
             {activeTab === 'offers' && (
               <div>
-                <div className="flex items-center mb-8">
-                  <div className="bg-blue-100 rounded-full p-4 mr-5 shadow-md">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="flex flex-col sm:flex-row items-center mb-6 sm:mb-8">
+                  <div className="bg-blue-100 rounded-full p-3 sm:p-4 mr-0 sm:mr-5 mb-4 sm:mb-0 shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 sm:h-12 sm:w-12 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                     </svg>
                   </div>
-                  <div>
-                    <h2 className="text-3xl font-bold text-gray-900">Books I Messaged On</h2>
-                    <p className="text-gray-600 mt-1">Track the status of your messages on various books</p>
+                  <div className="text-center sm:text-left">
+                    <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Books I Messaged On</h2>
+                    <p className="text-gray-600 mt-1 text-sm sm:text-base">Track the status of your messages on various books</p>
                   </div>
                 </div>
 
                 {offersLoading ? (
-                  <div className="flex justify-center items-center py-16">
+                  <div className="flex justify-center items-center py-12 sm:py-16">
                     <div className="text-center">
-                      <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-600 mx-auto"></div>
-                      <p className="mt-4 text-lg font-medium text-gray-700">Loading your messages...</p>
+                      <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-b-4 border-blue-600 mx-auto"></div>
+                      <p className="mt-4 text-base sm:text-lg font-medium text-gray-700">Loading your messages...</p>
                     </div>
                   </div>
                 ) : booksWithOffers.length === 0 ? (
-                  <div className="text-center py-16 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-20 w-20 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className="text-center py-12 sm:py-16 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                     </svg>
-                    <h3 className="mt-6 text-2xl font-bold text-gray-900">No messages sent yet</h3>
-                    <p className="mt-3 text-lg text-gray-600 max-w-md mx-auto">
+                    <h3 className="mt-6 text-xl sm:text-2xl font-bold text-gray-900">No messages sent yet</h3>
+                    <p className="mt-3 text-base sm:text-lg text-gray-600 max-w-md mx-auto">
                       Start sending messages on books you're interested in.
                     </p>
-                    <div className="mt-8">
+                    <div className="mt-6 sm:mt-8">
                       <a
                         href="/"
-                        className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300"
+                        className="inline-flex items-center px-5 py-2 sm:px-6 sm:py-3 border border-transparent text-sm sm:text-base font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300"
                       >
                         Browse Books
                       </a>
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-8">
+                  <div className="space-y-6">
                     {booksWithOffers.map(({ book, offers }) => (
                       <OfferItem key={book._id} book={book} offers={offers} />
                     ))}
@@ -1007,37 +1007,37 @@ const Profile = () => {
             {/* Messages Received Tab */}
             {activeTab === 'received' && (
               <div>
-                <div className="flex items-center mb-8">
-                  <div className="bg-blue-100 rounded-full p-4 mr-5 shadow-md">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="flex flex-col sm:flex-row items-center mb-6 sm:mb-8">
+                  <div className="bg-blue-100 rounded-full p-3 sm:p-4 mr-0 sm:mr-5 mb-4 sm:mb-0 shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 sm:h-12 sm:w-12 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                     </svg>
                   </div>
-                  <div>
-                    <h2 className="text-3xl font-bold text-gray-900">Messages Received</h2>
-                    <p className="text-gray-600 mt-1">Manage messages sent on your books</p>
+                  <div className="text-center sm:text-left">
+                    <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Messages Received</h2>
+                    <p className="text-gray-600 mt-1 text-sm sm:text-base">Manage messages sent on your books</p>
                   </div>
                 </div>
 
                 {offersLoading ? (
-                  <div className="flex justify-center items-center py-16">
+                  <div className="flex justify-center items-center py-12 sm:py-16">
                     <div className="text-center">
-                      <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-600 mx-auto"></div>
-                      <p className="mt-4 text-lg font-medium text-gray-700">Loading received messages...</p>
+                      <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-b-4 border-blue-600 mx-auto"></div>
+                      <p className="mt-4 text-base sm:text-lg font-medium text-gray-700">Loading received messages...</p>
                     </div>
                   </div>
                 ) : receivedOffers.length === 0 ? (
-                  <div className="text-center py-16 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-20 w-20 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className="text-center py-12 sm:py-16 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                     </svg>
-                    <h3 className="mt-6 text-2xl font-bold text-gray-900">No messages received yet</h3>
-                    <p className="mt-3 text-lg text-gray-600 max-w-md mx-auto">
+                    <h3 className="mt-6 text-xl sm:text-2xl font-bold text-gray-900">No messages received yet</h3>
+                    <p className="mt-3 text-base sm:text-lg text-gray-600 max-w-md mx-auto">
                       When buyers send messages on your books, they will appear here.
                     </p>
                   </div>
                 ) : (
-                  <div className="space-y-8">
+                  <div className="space-y-6">
                     {receivedOffers.map((offer) => (
                       <ReceivedOfferItem 
                         key={offer._id} 

@@ -13,7 +13,10 @@ import {
   MagnifyingGlassIcon,
   CircleStackIcon,
   HandThumbUpIcon,
-  TruckIcon
+  TruckIcon,
+  UsersIcon,
+  HeartIcon,
+  GiftIcon
 } from '@heroicons/react/24/outline';
 import { BoltIcon } from '@heroicons/react/24/solid';
 
@@ -56,7 +59,12 @@ const Home = () => {
       setLoading(true);
       setError(null);
       setSearchPerformed(true);
-      const res = await searchBooks(searchParams);
+      
+      // Extract search query from searchParams
+      const query = searchParams.query || '';
+      
+      // Call searchBooks with the query parameter
+      const res = await searchBooks({ query });
       setBooks(res.data);
     } catch (err) {
       console.error('Error searching books:', err);
@@ -91,6 +99,13 @@ const Home = () => {
   const SellBookIcon = PlusCircleIcon;
   const JoinNowIcon = UserPlusIcon;
   const BrowseBooksIcon = MagnifyingGlassIcon;
+
+  // Split books into chunks of 10 for multiple carousels
+  const chunkSize = 10;
+  const bookChunks = [];
+  for (let i = 0; i < books.length; i += chunkSize) {
+    bookChunks.push(books.slice(i, i + chunkSize));
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans antialiased">
@@ -216,36 +231,43 @@ const Home = () => {
           </div>
         ) : (
           <>
-            {/* Books Carousel */}
+            {/* Books Carousels */}
             {books.length > 0 ? (
-              <div className="relative">
-                <Swiper
-                  modules={[Navigation, Pagination, A11y]}
-                  spaceBetween={30}
-                  slidesPerView={1}
-                  breakpoints={{
-                    640: {
-                      slidesPerView: 2,
-                    },
-                    768: {
-                      slidesPerView: 3,
-                    },
-                    1024: {
-                      slidesPerView: 4,
-                    },
-                  }}
-                  navigation
-                  pagination={{ clickable: true }}
-                  className="pb-12"
-                >
-                  {books.map(book => (
-                    <SwiperSlide key={book._id}>
-                      <div className="h-full">
-                        <BookCard book={book} />
-                      </div>
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
+              <div>
+                {bookChunks.map((chunk, index) => (
+                  <div key={index} className="mb-12">
+                    <h3 className="text-xl font-bold text-gray-800 mb-4">
+                      {searchPerformed ? "Search Results" : `Books ${index * chunkSize + 1}-${Math.min((index + 1) * chunkSize, totalBooksCount)}`}
+                    </h3>
+                    <Swiper
+                      modules={[Navigation, Pagination, A11y]}
+                      spaceBetween={30}
+                      slidesPerView={1}
+                      breakpoints={{
+                        640: {
+                          slidesPerView: 2,
+                        },
+                        768: {
+                          slidesPerView: 3,
+                        },
+                        1024: {
+                          slidesPerView: 4,
+                        },
+                      }}
+                      navigation
+                      pagination={{ clickable: true }}
+                      className="pb-12"
+                    >
+                      {chunk.map(book => (
+                        <SwiperSlide key={book._id}>
+                          <div className="h-full">
+                            <BookCard book={book} />
+                          </div>
+                        </SwiperSlide>
+                      ))}
+                    </Swiper>
+                  </div>
+                ))}
               </div>
             ) : (
               /* Empty State */
@@ -339,6 +361,97 @@ const Home = () => {
               <p className="text-gray-700 text-lg">
                 Connect and arrange pick-up or delivery quickly and securely, often on or near campus.
               </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Community Section - Helping Friends */}
+      <div className="bg-gradient-to-r from-teal-50 to-emerald-50 py-20 border-t border-b border-gray-100 shadow-inner">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <div className="inline-block px-4 py-1 text-sm font-semibold tracking-widest text-emerald-800 bg-emerald-100 rounded-full mb-4 uppercase">
+              COMMUNITY SPIRIT
+            </div>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">Helping Friends, Saving Together</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Our mission goes beyond just selling books. We believe in helping students access affordable education by connecting peers who want to give away or sell books at low prices.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            {/* Community Feature 1 */}
+            <div className="text-center bg-white p-8 rounded-3xl shadow-xl border border-gray-200 transform hover:scale-[1.02] transition-transform duration-300">
+              <div className="flex justify-center mb-6">
+                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-amber-500 text-white shadow-lg">
+                  <GiftIcon className="w-8 h-8"/>
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Free Books</h3>
+              <p className="text-gray-700 text-lg">
+                Many students offer books for free to help others. Find textbooks at no cost and pay it forward when you're done.
+              </p>
+            </div>
+
+            {/* Community Feature 2 */}
+            <div className="text-center bg-white p-8 rounded-3xl shadow-xl border border-gray-200 transform hover:scale-[1.02] transition-transform duration-300">
+              <div className="flex justify-center mb-6">
+                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-amber-500 text-white shadow-lg">
+                  <UsersIcon className="w-8 h-8"/>
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Help Friends</h3>
+              <p className="text-gray-700 text-lg">
+                Connect directly with classmates and friends in your college community. Help each other succeed by sharing resources.
+              </p>
+            </div>
+
+            {/* Community Feature 3 */}
+            <div className="text-center bg-white p-8 rounded-3xl shadow-xl border border-gray-200 transform hover:scale-[1.02] transition-transform duration-300">
+              <div className="flex justify-center mb-6">
+                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-amber-500 text-white shadow-lg">
+                  <HeartIcon className="w-8 h-8"/>
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Low Prices</h3>
+              <p className="text-gray-700 text-lg">
+                Find books at significantly lower prices than bookstores. Students helping students keep education affordable.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-16 text-center">
+            <div className="bg-white p-8 rounded-3xl shadow-xl border border-gray-200 max-w-3xl mx-auto">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Join Our Community of Givers</h3>
+              <p className="text-gray-700 text-lg mb-6">
+                Every book shared is a step toward making education more accessible. Whether you're giving away books for free or selling at a low price, you're making a difference in someone's educational journey.
+              </p>
+              <div className="flex flex-col sm:flex-row justify-center gap-4">
+                {isAuthenticated ? (
+                  <a 
+                    href="/add-book" 
+                    className="inline-flex items-center justify-center bg-amber-500 text-white hover:bg-amber-600 font-bold py-3 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105"
+                  >
+                    <GiftIcon className="w-5 h-5 mr-2" />
+                    Share a Book
+                  </a>
+                ) : (
+                  <a 
+                    href="/register" 
+                    className="inline-flex items-center justify-center bg-amber-500 text-white hover:bg-amber-600 font-bold py-3 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105"
+                  >
+                    <UserPlusIcon className="w-5 h-5 mr-2" />
+                    Join the Community
+                  </a>
+                )}
+                <a 
+                  href="#browse" 
+                  className="inline-flex items-center justify-center bg-transparent border-2 border-amber-500 text-amber-600 hover:bg-amber-50 font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-300"
+                >
+                  <BrowseBooksIcon className="w-5 h-5 mr-2" />
+                  Browse Free Books
+                </a>
+              </div>
             </div>
           </div>
         </div>

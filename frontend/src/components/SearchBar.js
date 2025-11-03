@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 
 const SearchBar = ({ onSearch }) => {
-  const [keyword, setKeyword] = useState('');
+  const [query, setQuery] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSearch({ keyword });
+    onSearch({ query });
   };
 
   const resetForm = () => {
-    setKeyword('');
-    onSearch({ keyword: '' });
+    setQuery('');
+    onSearch({ query: '' });
   };
 
   return (
@@ -41,10 +41,10 @@ const SearchBar = ({ onSearch }) => {
               {/* Input field - responsive sizing */}
               <input
                 type="text"
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
                 className="block w-full pl-10 sm:pl-12 pr-16 sm:pr-20 py-3 sm:py-4 text-base sm:text-lg border-2 border-emerald-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 bg-emerald-50"
-                placeholder="Search by book name, author, or keyword..."
+                placeholder="Search by book name or city..."
               />
               
               {/* Search button - responsive layout */}
