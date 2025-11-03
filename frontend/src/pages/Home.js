@@ -17,15 +17,6 @@ import {
 } from '@heroicons/react/24/outline';
 import { BoltIcon } from '@heroicons/react/24/solid';
 
-// Import Swiper React components
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, A11y } from 'swiper/modules';
-
-// Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-
 const Home = () => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -149,7 +140,9 @@ const Home = () => {
       <div id="browse" className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
         
         {/* Search Section */}
-        <SearchBar onSearch={handleSearch} />
+        
+            <SearchBar onSearch={handleSearch} />
+         
 
         {/* Listing Header & Stats */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10">
@@ -216,36 +209,14 @@ const Home = () => {
           </div>
         ) : (
           <>
-            {/* Books Carousel */}
+            {/* Books Grid */}
             {books.length > 0 ? (
-              <div className="relative">
-                <Swiper
-                  modules={[Navigation, Pagination, A11y]}
-                  spaceBetween={30}
-                  slidesPerView={1}
-                  breakpoints={{
-                    640: {
-                      slidesPerView: 2,
-                    },
-                    768: {
-                      slidesPerView: 3,
-                    },
-                    1024: {
-                      slidesPerView: 4,
-                    },
-                  }}
-                  navigation
-                  pagination={{ clickable: true }}
-                  className="pb-12"
-                >
-                  {books.map(book => (
-                    <SwiperSlide key={book._id}>
-                      <div className="h-full">
-                        <BookCard book={book} />
-                      </div>
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                {books.map(book => (
+                  <div key={book._id} className="transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl rounded-2xl">
+                    <BookCard book={book} />
+                  </div>
+                ))}
               </div>
             ) : (
               /* Empty State */
